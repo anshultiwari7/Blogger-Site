@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>
+        BLOG
+    </title>
+</head>
+<body>
+<a href="/logout/">Logout</a>
+<h1 style="color: red">
+    {{ blog_title }}
+</h1>
+<br>
+<p>
+    {{ blog_content }}
+</p>
+{% if type == '0' %}
+    <a href="/delete/{{ blog_id }}">Delete</a>
+    <br>
+    <a href="/edit/{{ blog_id }}">Edit</a>
+{% endif %}
+</body>
+</html>

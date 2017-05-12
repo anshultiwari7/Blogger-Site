@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>User Login</title>
+</head>
+<body>
+<p>{{ message }}</p>
+<h1>User Login</h1>
+<form method="post" action="/login/" enctype="application/x-www-form-urlencoded">
+    {% csrf_token %}
+    <label>Email</label><input type="text" name="email" id="email">
+    <label>Password</label><input type="password" name="password" id="password">
+    <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+</form>
+</body>
+</html>

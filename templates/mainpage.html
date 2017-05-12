@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Main Page</title>
+</head>
+<body>
+<h1>Main Page</h1>
+<a href="/logout">Logout</a>
+
+
+{% if type == '2' %}
+<form method="post" action="/mainpage/" enctype="application/x-www-form-urlencoded">
+    <label>Title</label><input type="text" name="title" id="title">
+    <label>Content</label><input type="text" name="content" id="content">
+    <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+    <label for="blog2">All Blogs</label>
+{% endif %}
+
+{% if type == '1' %}
+    <ul>
+        {% for x in blog2 %}
+            <li>
+                <a href="/blog/{{ x.id }}">{{ x.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+{% elif type == '0' %}
+    <ul>
+        {% for x in blog2 %}
+            <li>
+                <a href="/blog/{{ x.id }}">{{ x.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% elif type == '2' %}
+    <ul>
+        {% for x in rest_blog %}
+            <li>
+                <a href="/blog/{{ x.id }}">{{ x.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <h5>MY POSTED BLOGS</h5>
+    <ul>
+        {% for x in self_blog %}
+            <li>
+                <a href="/blog/{{ x.id }}">{{ x.title}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+</form>
+</body>
+</html>
