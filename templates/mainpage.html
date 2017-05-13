@@ -8,10 +8,17 @@
 
 
 {% if type == '2' %}
+    <h2>ADD NEW BLOG</h2>
 <form method="post" action="/mainpage/" enctype="application/x-www-form-urlencoded">
-    <label>Title</label><input type="text" name="title" id="title">
-    <label>Content</label><input type="text" name="content" id="content">
-    <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+    {% csrf_token %}
+    <label>Title &nbsp;&nbsp;&nbsp;&nbsp; :</label><input type="text" name="title" id="title">
+    <br>
+    <label>Content :</label><input type="text" name="content" id="content">
+    <br>
+    <br>
+    <button type="submit" class="btn btn-primary" value="submit">Upload</button>
+    <br>
+    <br>
     <label for="blog2">All Blogs</label>
 {% endif %}
 
@@ -38,7 +45,7 @@
     <ul>
         {% for x in rest_blog %}
             <li>
-                <a href="/blog/{{ x.id }}">{{ x.title }}</a>
+                <a href="/viewblog/{{ x.id }}">{{ x.title }}</a>
             </li>
         {% endfor %}
     </ul>

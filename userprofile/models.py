@@ -13,7 +13,7 @@ class user(models.Model):
 class blog2(models.Model):
     title = models.CharField(max_length=500)
     content = models.CharField(max_length=5000)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=False)
     modified = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.id)

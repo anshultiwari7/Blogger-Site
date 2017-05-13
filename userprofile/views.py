@@ -4,169 +4,148 @@ from __future__ import unicode_literals
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
-
+import datetime
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
 # from rest_framework import status
 # from rest_framework.response import Response
 # from rest_framework.views import APIView
 
-from .models import *
+from .models import blog2, user, blog1
+
 
 # def blogeditdelete(request,id):
-def delete(request,id):
+def delete(request, id):
     x = blog2.objects.get(pk=id)
     x.delete()
-    return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '0'})
+    y = blog2.objects.all()
+    if request.session['type'] == '0':
+        return render(request, 'mainpage.html',
+                      {'blog_title': y.title, 'blog_content': y.content, 'blog_id': y.id, "type": "0"})
+    elif request.session['type'] == '2':
+        my_blogs = get_my_blogs(request.session['user'])
+        rest_blog = blog2.objects.all()
+        return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
+    else:
+        return HttpResponse("You are not allowed")
+
 
 @csrf_exempt
-def edit(request,id):
-    x = blog2.objects.get(pk = id)
+def edit(request, id):
+    x = blog2.objects.get(pk=id)
     if request.method == 'GET':
-        return render(request,'editpage.html',{'blog_title':x.title,'blog_content':x.content,'blog_id':x.id})
+        return render(request, 'editpage.html', {'blog_title': x.title, 'blog_content': x.content, 'blog_id': x.id})
     if request.method == 'POST':
         form = request.POST
         x.title = form['title']
         x.content = form['content']
         x.save()
-        return render(request,'mainpage.html',{'blog2': blog2.objects.all(), 'type': '0'})
+        y = blog2.objects.all()
+        if request.session['type'] == '0':
+            return render(request, 'mainpage.html',
+                          {'blog_title': y.title, 'blog_content': y.content, 'blog_id': y.id, "type": "0"})
+        elif request.session['type'] == '2':
+            my_blogs = get_my_blogs(request.session['user'])
+            rest_blog = blog2.objects.all()
+            return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
+        else:
+            return HttpResponse("You are not allowed")
 
-def blog(request,id):
+
+def blog(request, id):
     if 'user' in request.session:
         x = blog2.objects.get(pk=id)
         if request.session['type'] == '1':
-             return render(request,'blog.html',{'blog_title':x.title,'blog_content':x.content,'blog_id':x.id,"type":"1"})
+            return render(request, 'blog.html',
+                          {'blog_title': x.title, 'blog_content': x.content, 'blog_id': x.id, "type": "1"})
         elif request.session['type'] == '0':
-            return render(request, 'blog.html', {'blog_title': x.title, 'blog_content': x.content, 'blog_id': x.id, "type":"0"})
+            return render(request, 'blog.html',
+                          {'blog_title': x.title, 'blog_content': x.content, 'blog_id': x.id, "type": "0"})
+        elif request.session['type'] == '2':
+            return render(request, 'blog.html',
+                          {'blog_title': x.title, 'blog_content': x.content, 'blog_id': x.id, "type": "2"})
         else:
             return HttpResponse('YOU are not alloweded')
+
 
 @csrf_exempt
 def login(request):
     if request.method == 'GET':
         if 'user' in request.session:
             if request.session['type'] == '1':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'1'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '1'})
             elif request.session['type'] == '0':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'0'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '0'})
             elif request.session['type'] == '2':
                 self_blog = []
-                rest_blog = []
+
                 usr = user.objects.get(pk=request.session['user'])
                 temp_self_blog = blog1.objects.filter(author_id=usr.id)
-                # self_blog = blog2.objects.filter(id=temp_self_blog)
+
                 test_blog = blog2.objects.all()
-                # print temp_self_blog
-                # print self_blog
+
                 for val in temp_self_blog:
                     for val2 in test_blog:
-                        if val2==val.blog_id:
+                        if val2 == val.blog_id:
                             self_blog.append(val2)
-                        # else:
-                        #     if val2 not in rest_blog:
-                        #         rest_blog.append(val2)
-                        #     try:
-                        #         rest_blog.remove(val.blog_id)
-                        #     except:
-                        #         pass
+
                 rest_blog = blog2.objects.all()
 
                 print self_blog
-                # rest_blog.append(val2)
-                # print(blg1.blog_id))
-                # print self_blog[]
-                # print(self_blog)
-                # print(self_blog)
+
                 print rest_blog
-                # blg2 = blog2.objects.all()
-                # print(rest_blog)
+
                 print("Hello")
-                # for value in blg2:
-                # for value in blg2:
-                #     print("value ID", value.id)
-                #     for x in blg1:
-                #         print("My Blog Id",x.blog_id.id)
-                #         if x.blog_id == value.id:
-                #             self_blog.append(value)
-                #         else:
-                #             rest_blog.append(value)
+
                 return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': self_blog, 'type': '2'})
         else:
-            return render(request, 'login.html',{"message":"Please Login"})
+            return render(request, 'login.html', {"message": "Please Login"})
 
     if request.method == 'POST':
         x = request.POST
         # print(x)
-        tempuser = user.objects.filter(email=x['email'],password=x['password'])
+        tempuser = user.objects.filter(email=x['email'], password=x['password'])
         # print(x)
         if tempuser[0]:
             request.session['user'] = tempuser[0].pk
             request.session['type'] = tempuser[0].type
             # print(request.session['type'])
             if request.session['type'] == '1':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'1'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '1'})
             elif request.session['type'] == '0':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'0'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '0'})
             elif request.session['type'] == '2':
-                self_blog = []
-                rest_blog = []
-                usr = user.objects.get(pk=request.session['user'])
-                temp_self_blog = blog1.objects.filter(author_id=usr.id)
-                # self_blog = blog2.objects.filter(id=temp_self_blog)
-                test_blog = blog2.objects.all()
-                # print temp_self_blog
-                # print self_blog
-                for val in temp_self_blog:
-                    for val2 in test_blog:
-                        if val2==val.blog_id:
-                            self_blog.append(val2)
-                        # else:
-                        #     if val2 not in rest_blog:
-                        #         rest_blog.append(val2)
-                        #     try:
-                        #         rest_blog.remove(val.blog_id)
-                        #     except:
-                        #         pass
+                my_blogs = get_my_blogs(request.session['user'])
                 rest_blog = blog2.objects.all()
-
-                print self_blog
-                # rest_blog.append(val2)
-                # print(blg1.blog_id))
-                # print self_blog[]
-                # print(self_blog)
-                # print(self_blog)
-                print rest_blog
-                # blg2 = blog2.objects.all()
-                # print(rest_blog)
-                print("Hello")
-                # for value in blg2:
-                # for value in blg2:
-                #     print("value ID", value.id)
-                #     for x in blg1:
-                #         print("My Blog Id",x.blog_id.id)
-                #         if x.blog_id == value.id:
-                #             self_blog.append(value)
-                #         else:
-                #             rest_blog.append(value)
-                return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': self_blog, 'type': '2'})
-                return render(request,'mainpage.html',{'rest_blog':rest_blog,'self_blog':self_blog,'type':'2'})
+                return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
         else:
-            return render(request,'login.html',{"message":"Login again"})
+            return render(request, 'login.html', {"message": "Login again"})
 
+
+@csrf_exempt
 def mainpage(request):
     if request.method == 'GET':
         if 'user' in request.session:
             if request.session['type'] == '1':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'1'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '1'})
             elif request.session['type'] == '0':
-                return render(request,'mainpage.html',{'blog2':blog2.objects.all(),'type':'0'})
+                return render(request, 'mainpage.html', {'blog2': blog2.objects.all(), 'type': '0'})
+            elif request.session['type'] == '2':
+                my_blogs = get_my_blogs(request.session['user'])
+                rest_blog = blog2.objects.all()
+                return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
+
         else:
-            return render(request, 'login.html',{"message":"Please Login"})
+            return render(request, 'login.html', {"message": "Please Login"})
     if request.method == 'POST':
-        x = request.POST
-        blog2.title = x['title']
-        # blog2.
-    return render(request, 'mainpage.html')
+        title = request.POST.get('title', '')
+        content = request.POST.get('content', '')
+        rest_blog = blog2.objects.all()
+        blog = blog2(name=title, content=content, created=datetime.datetimenow())
+        blog.save()
+        my_blogs = get_my_blogs(request.session['user'])
+    return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
+
 
 def logout(request):
     try:
@@ -174,12 +153,13 @@ def logout(request):
         del request.session['type']
     except:
         pass
-    return render(request,'login.html',{"message":"You are logged out"})
+    return render(request, 'login.html', {"message": "You are logged out"})
 
-csrf_exempt
+
+@csrf_exempt
 def signup(request):
     if request.method == 'GET':
-        return render(request,'signup.html')
+        return render(request, 'signup.html')
     # if request.method == 'POST':
     #     x = request.POST
     #     user = user()
@@ -202,3 +182,29 @@ def signup(request):
         form = user()  # an unboundform
 
         return render(request, 'signup.html', {'form': form})
+
+def view_blog(request,id):
+    if request.method == 'GET':
+        if 'user' in request.session:
+            x = blog2.objects.get(pk=id)
+            return render(request, 'views_blog.html',{'blog_title': x.title, 'blog_content': x.content})
+        else:
+            return render(request, 'login.html', {"message": "Please Login"})
+
+
+def get_my_blogs(z):
+    self_blog = []
+    usr = user.objects.get(pk=z)
+    temp_self_blog = blog1.objects.filter(author_id=usr.id)
+    test_blog = blog2.objects.all()
+    for val in temp_self_blog:
+        for val2 in test_blog:
+            if val2 == val.blog_id:
+                self_blog.append(val2)
+
+    return self_blog
+
+# def test(request):
+#     request.path = '/login/'
+#     print(request.path)
+#     return HttpResponse("hello")
