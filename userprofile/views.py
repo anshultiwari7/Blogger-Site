@@ -141,7 +141,7 @@ def mainpage(request):
         title = request.POST.get('title', '')
         content = request.POST.get('content', '')
         rest_blog = blog2.objects.all()
-        blog = blog2(name=title, content=content, created=datetime.datetimenow())
+        blog = blog2(title=title, content=content, created=datetime.datetime.now())
         blog.save()
         my_blogs = get_my_blogs(request.session['user'])
     return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
