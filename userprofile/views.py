@@ -171,8 +171,9 @@ def signup(request):
         name = request.POST.get('name', '')
         email = request.POST.get('email', '')
         password = request.POST.get('password', '')
+        type = request.POST.get('type', '')
         # creating an user object containing all the data
-        user_obj = user(name=name, email=email, password=password)
+        user_obj = user(name=name, email=email, password=password,type=type)
         # saving all the data in the current object into the database
         user_obj.save()
 

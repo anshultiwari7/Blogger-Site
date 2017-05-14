@@ -7,11 +7,11 @@
 <body>
 <a href="/logout/">Logout</a>
 <h1 style="color: red">
-    {{ blog_title }}
+   Blog Title : {{ blog_title }}
 </h1>
 <br>
 <p>
-    {{ blog_content }}
+    Content : {{ blog_content }}
 </p>
 {% if type == '0' or type == '2'%}
     <a href="/delete/{{ blog_id }}">Delete</a>
@@ -19,7 +19,7 @@
     <a href="/edit/{{ blog_id }}">Edit</a>
 {% endif %}
 <br>
-<a href="/mainpage/">Go To Mainpage</a>
+<a href="/mainpage/">Go Back To Mainpage</a>
 </body>
 
 </html>
