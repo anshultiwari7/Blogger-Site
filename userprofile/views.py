@@ -149,10 +149,13 @@ def mainpage(request):
         content = request.POST.get('content', '')
         rest_blog = blog2.objects.all()
         blog = blog2(title=title, content=content, created=datetime.datetime.now())
-        # print blog['id']
         blog.save()
-
+        x = blog2.objects.get(title=title,content=content)
+        usr = user.objects.get(id = request.session['user'])
+        y = blog1(author_id=usr,blog_id=x)
+        y.save()
         my_blogs = get_my_blogs(request.session['user'])
+
     return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
 
 
@@ -169,14 +172,9 @@ def logout(request):
 def signup(request):
     if request.method == 'GET':
         return render(request, 'signup.html')
-    # if request.method == 'POST':
-    #     x = request.POST
-    #     user = user()
-    if request.method == 'POST':  # if the form has been filled
 
+    if request.method == 'POST':
         form = user(request.POST)
-
-        # if form.is_valid():  # All the data is valid
         name = request.POST.get('name', '')
         email = request.POST.get('email', '')
         password = request.POST.get('password', '')

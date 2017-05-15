@@ -11,9 +11,9 @@
     <h2>ADD NEW BLOG</h2>
 <form method="post" action="/mainpage/" enctype="application/x-www-form-urlencoded">
     {% csrf_token %}
-    <label>Title &nbsp;&nbsp;&nbsp;&nbsp; :</label><input type="text" name="title" id="title">
+    <label>Title &nbsp;&nbsp;&nbsp;&nbsp; :</label><input type="text" name="title" id="title" required>
     <br>
-    <label>Content :</label><input type="text" name="content" id="content">
+    <label>Content :</label><input type="text" name="content" id="content" required>
     <br>
     <br>
     <button type="submit" class="btn btn-primary" value="submit">Upload</button>
