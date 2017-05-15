@@ -16,12 +16,19 @@ from .models import blog2, user, blog1
 
 # def blogeditdelete(request,id):
 def delete(request, id):
+    print "Helloworld"
     x = blog2.objects.get(pk=id)
     x.delete()
+    # print x
+    print "hello2"
     y = blog2.objects.all()
+    print("Hello3")
+    # print "hello"
+    # print y['title']
+    # print(y.title)
+    # print y[0].title
     if request.session['type'] == '0':
-        return render(request, 'mainpage.html',
-                      {'blog_title': y.title, 'blog_content': y.content, 'blog_id': y.id, "type": "0"})
+        return render(request,'mainpage.html', {'blog2': blog2.objects.all(), 'type': '0'})
     elif request.session['type'] == '2':
         my_blogs = get_my_blogs(request.session['user'])
         rest_blog = blog2.objects.all()
@@ -142,7 +149,9 @@ def mainpage(request):
         content = request.POST.get('content', '')
         rest_blog = blog2.objects.all()
         blog = blog2(title=title, content=content, created=datetime.datetime.now())
+        # print blog['id']
         blog.save()
+
         my_blogs = get_my_blogs(request.session['user'])
     return render(request, 'mainpage.html', {'rest_blog': rest_blog, 'self_blog': my_blogs, 'type': '2'})
 
